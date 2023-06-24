@@ -13,10 +13,15 @@
 } from "native-base";
 
 import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
-import React, { useState } from "react";
+import { useState, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Screens } from "../data";
+import { KEY, Screens, envs } from "../data";
 import { TouchableOpacity } from "react-native";
+import axios from "axios";
+import { useAuth } from "../provider/AuthContextProvider";
+import useNavigation from "../hooks/useNavigation";
+import { LoginDataType, RegistrationDataType } from "../types";
+import * as SecureStore from "expo-secure-store";
 
 interface TouchButtonProps {
 	onPress: () => void;
@@ -31,16 +36,64 @@ const TouchButton = ({ onPress, title }: TouchButtonProps) => (
 	</TouchableOpacity>
 );
 
-export default function Auth(props: any) {
-	const [show, setShow] = React.useState(false);
+const { BASE_URL } = envs;
+const API = axios.create({ baseURL: BASE_URL + "/user" });
+
+const initialState = {
+	name: "",
+	email: "",
+	password: "",
+};
+
+export default function Auth() {
+	const navigation = useNavigation();
+	const [show, setShow] = useState(false);
+	const { isAuth, setIsAuth } = useAuth();
 	const [loginActive, setLoginActive] = useState(true);
+
+	const [formData, setFormData] = useState(initialState);
+	const [isLoading, setIsLoading] = useState(false);
+	const [isError, setIsError] = useState(false);
+
+	if (isAuth) {
+		navigation.navigate(Screens.HomeScreen);
+	}
+
+	const Authenticate = useCallback(
+		async (formData: RegistrationDataType) => {
+			setIsLoading(true);
+			try {
+				const { data } = await API.post(
+					loginActive ? "/login" : "/register",
+					formData,
+				);
+				if (data === "Above Email is not registered with us") {
+					alert(data);
+					setIsError(true);
+				} else if (data === "Oopss.. you have enterd a wrong password") {
+					alert(data);
+					setIsError(true);
+				} else {
+					await SecureStore.setItemAsync(KEY, data.token);
+					setIsAuth(true);
+					navigation.replace(Screens.HomeScreen);
+				}
+				setIsLoading(false);
+			} catch (error) {
+				alert("Interanl Server Error");
+				setIsLoading(false);
+				setIsError(true);
+			} /* finally(){} */
+		},
+		[loginActive],
+	);
 
 	return (
 		<Stack flex={1} space={10} p={2}>
 			<SafeAreaView>
 				<Flex alignItems={"flex-end"} p={5} pt={2}>
 					<TouchButton
-						onPress={() => props.navigation.navigate(Screens.HomeScreen)}
+						onPress={() => navigation.navigate(Screens.HomeScreen)}
 						title="Skip"
 					/>
 				</Flex>
@@ -59,6 +112,8 @@ export default function Auth(props: any) {
 						size={"xl"}
 						focusOutlineColor={"teal.500"}
 						py={3}
+						value={formData.name}
+						onChangeText={(e) => setFormData((x) => ({ ...x, name: e }))}
 						colorScheme={"teal"}
 						InputLeftElement={
 							<Icon
@@ -76,6 +131,8 @@ export default function Auth(props: any) {
 					size={"xl"}
 					focusOutlineColor={"teal.500"}
 					py={3}
+					value={formData.email}
+					onChangeText={(e) => setFormData((x) => ({ ...x, email: e }))}
 					colorScheme={"teal"}
 					InputLeftElement={
 						<Icon
@@ -93,6 +150,8 @@ export default function Auth(props: any) {
 					py={3}
 					focusOutlineColor={"teal.500"}
 					colorScheme={"teal"}
+					value={formData.password}
+					onChangeText={(e) => setFormData((x) => ({ ...x, password: e }))}
 					type={show ? "text" : "password"}
 					InputRightElement={
 						<TouchableOpacity onPress={() => setShow(!show)}>
@@ -117,7 +176,9 @@ export default function Auth(props: any) {
 				w={"90%"}
 				alignSelf={"center"}
 				size="lg"
+				onPress={() => Authenticate(formData)}
 				py={4}
+				isLoading={isLoading}
 				variant="solid">
 				{loginActive ? "Login to Continue" : "Register"}
 			</Button>

@@ -12,3 +12,11 @@ export interface IconType {
 	iconSize?: ThemeComponentSizeType<"Icon">;
 	titleSize?: any;
 }
+
+export interface LoginDataType {
+	email: string;
+	password: string;
+}
+export interface RegistrationDataType extends LoginDataType {
+	name: string;
+}

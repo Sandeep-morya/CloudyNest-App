@@ -182,3 +182,13 @@ export const paymentImages = {
 		"https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Paytm_logo.png/640px-Paytm_logo.png",
 	google_pay: "https://assets.stickpng.com/images/60e7f964711cf700048b6a6a.png",
 };
+
+export const envs = {
+	CLOUD_NAME: "due9pi68z",
+	UPLOAD_PRESET: "e-commerce-website",
+	UPLOAD_URL: "https://api.cloudinary.com/v1_1/due9pi68z/image/upload",
+	SECERT: "sandeep-morya-cloudynest-secret-key",
+	BASE_URL: "https://sangria-reindeer-wear.cyclic.app",
+};
+
+export const KEY = "auth";
