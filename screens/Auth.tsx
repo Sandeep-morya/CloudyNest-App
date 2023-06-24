@@ -15,13 +15,14 @@
 import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { useState, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { KEY, Screens, envs } from "../data";
+import { KEY, Screens } from "../data";
 import { TouchableOpacity } from "react-native";
 import axios from "axios";
 import { useAuth } from "../provider/AuthContextProvider";
 import useNavigation from "../hooks/useNavigation";
-import { LoginDataType, RegistrationDataType } from "../types";
-import * as SecureStore from "expo-secure-store";
+import { RegistrationDataType } from "../types";
+import API from "../utlis/api";
+import { save } from "../utlis/secureStorage";
 
 interface TouchButtonProps {
 	onPress: () => void;
@@ -36,9 +37,6 @@ const TouchButton = ({ onPress, title }: TouchButtonProps) => (
 	</TouchableOpacity>
 );
 
-const { BASE_URL } = envs;
-const API = axios.create({ baseURL: BASE_URL + "/user" });
-
 const initialState = {
 	name: "",
 	email: "",
@@ -48,25 +46,23 @@ const initialState = {
 export default function Auth() {
 	const navigation = useNavigation();
 	const [show, setShow] = useState(false);
-	const { isAuth, setIsAuth } = useAuth();
+	const { auth, addAuth } = useAuth();
 	const [loginActive, setLoginActive] = useState(true);
 
 	const [formData, setFormData] = useState(initialState);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isError, setIsError] = useState(false);
 
-	if (isAuth) {
+	if (auth) {
 		navigation.navigate(Screens.HomeScreen);
 	}
 
 	const Authenticate = useCallback(
 		async (formData: RegistrationDataType) => {
 			setIsLoading(true);
+			const endpoint = loginActive ? "/user/login" : "/user/register";
 			try {
-				const { data } = await API.post(
-					loginActive ? "/login" : "/register",
-					formData,
-				);
+				const { data } = await API.post(endpoint, formData);
 				if (data === "Above Email is not registered with us") {
 					alert(data);
 					setIsError(true);
@@ -74,8 +70,7 @@ export default function Auth() {
 					alert(data);
 					setIsError(true);
 				} else {
-					await SecureStore.setItemAsync(KEY, data.token);
-					setIsAuth(true);
+					addAuth(data.token);
 					navigation.replace(Screens.HomeScreen);
 				}
 				setIsLoading(false);

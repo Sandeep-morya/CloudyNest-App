@@ -6,30 +6,39 @@
 	useContext,
 } from "react";
 import { KEY } from "../data";
-import * as SecureStore from "expo-secure-store";
+import { getValueFor, remove, save } from "../utlis/secureStorage";
 
 interface AuthProps {
-	isAuth: boolean;
-	setIsAuth: React.Dispatch<React.SetStateAction<boolean>>;
+	auth: string | null;
+	addAuth: (token: string) => void;
+	removeAuth: () => void;
 }
 
 const AuthContext = createContext({} as AuthProps);
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+	return useContext(AuthContext);
+};
 
 const AuthContextProvider = (props: PropsWithChildren) => {
-	const [isAuth, setIsAuth] = useState(true);
+	const [auth, setAuth] = useState<string | null>(null);
 
-	console.log({ isAuth });
+	const addAuth = (token: string) => {
+		setAuth(token);
+		save(KEY, token);
+	};
+
+	const removeAuth = () => {
+		setAuth(null);
+		remove(KEY);
+	};
 
 	useEffect(() => {
-		SecureStore.getItemAsync(KEY).then((result) => {
-			result ? setIsAuth(true) : setIsAuth(false);
-		});
+		getValueFor(KEY).then((result) => setAuth(result));
 	}, []);
 
 	return (
-		<AuthContext.Provider value={{ isAuth, setIsAuth }}>
+		<AuthContext.Provider value={{ auth, addAuth, removeAuth }}>
 			{props.children}
 		</AuthContext.Provider>
 	);

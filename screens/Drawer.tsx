@@ -27,6 +27,8 @@ import { Screens } from "../data";
 import useNavigation from "../hooks/useNavigation";
 import { IconType } from "../types";
 import { StyleSheet, Animated } from "react-native";
+import useUserProfile from "../hooks/useUserProfile";
+import { useAuth } from "../provider/AuthContextProvider";
 
 interface Props {
 	children: string;
@@ -57,6 +59,8 @@ const Button = ({ children, onPress, LeftIcon }: Props) => {
 export default function Drawer() {
 	const navigation = useNavigation();
 	const drawerAnimation = new Animated.Value(0);
+	const { removeAuth, auth } = useAuth();
+	const userData = useUserProfile();
 
 	const openDrawer = () => {
 		Animated.timing(drawerAnimation, {
@@ -108,7 +112,7 @@ export default function Drawer() {
 							}}
 						/>
 						<Text fontWeight={"bold"} fontSize={18} color="white">
-							Hello
+							{auth ? userData?.name : "Hello"}
 						</Text>
 					</HStack>
 
@@ -117,10 +121,12 @@ export default function Drawer() {
 						borderColor={"white"}
 						px={2.5}
 						py={1}
-						onPress={() => navigation.navigate(Screens.AuthScreen)}
+						onPress={
+							auth ? removeAuth : () => navigation.navigate(Screens.AuthScreen)
+						}
 						borderRadius={"full"}>
 						<Text fontWeight={"bold"} fontSize={18} color="white">
-							Sign In
+							{auth ? "Logout" : "Sign In"}
 						</Text>
 					</Pressable>
 				</Flex>

@@ -8,9 +8,9 @@ interface Props {
 }
 
 const Private = ({ children }: Props) => {
-	const { isAuth } = useAuth();
+	const { auth } = useAuth();
 	const { navigate } = useNavigation();
-	if (!isAuth) {
+	if (!auth) {
 		navigate(Screens.AuthScreen);
 	}
 	return children;

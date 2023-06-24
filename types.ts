@@ -20,3 +20,15 @@ export interface LoginDataType {
 export interface RegistrationDataType extends LoginDataType {
 	name: string;
 }
+
+export interface UserType {
+	_id: string;
+	name: string;
+	email: string;
+	mobile: string;
+	address: string[];
+	isPrime: boolean;
+	createdAt: string;
+	updatedAt: string;
+	__v: number;
+}
