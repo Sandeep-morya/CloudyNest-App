@@ -54,7 +54,7 @@ export default function Products({ route, navigation }: Props) {
 		getProducts(page);
 	}, [page]);
 	return (
-		<VStack space={2} mb={12}>
+		<VStack space={1} mb={12} flex={1}>
 			<HStack p={3} bg="teal.100">
 				<Text fontWeight={"600"} fontSize="md">
 					Top search sesults for "{category}"
@@ -77,7 +77,7 @@ export default function Products({ route, navigation }: Props) {
 						<ProductCard key={product._id + "card"} {...product} />
 					)}
 					keyExtractor={(item) => item._id + "card"}
-					contentContainerStyle={{ rowGap: 10 }}
+					contentContainerStyle={{ rowGap: 10, paddingBottom: 85 }}
 				/>
 
 				{/*---:: Pagination ::---*/}
