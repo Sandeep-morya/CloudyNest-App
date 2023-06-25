@@ -13,14 +13,9 @@
 import React, { useState } from "react";
 import useNavigation from "../hooks/useNavigation";
 import { Screens } from "../data";
-interface Props {
-	id: string | number;
-	title: string;
-	images: string[];
-	price: number | string;
-}
+import { ProductType } from "../types";
 
-export default function ProductMediumCard(product: Props) {
+export default function ProductMediumCard(product: ProductType) {
 	const navigation = useNavigation();
 	const [thumbnail, setThumbnail] = useState(0);
 
@@ -28,7 +23,7 @@ export default function ProductMediumCard(product: Props) {
 		<VStack w="full" p={2} space={2}>
 			<Pressable
 				onPress={() =>
-					navigation.navigate(Screens.ProductDeatailScreen, { id: product.id })
+					navigation.navigate(Screens.ProductDeatailScreen, { data: product })
 				}>
 				<Image
 					w={"full"}

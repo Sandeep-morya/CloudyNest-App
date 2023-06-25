@@ -2,7 +2,6 @@
 import { trending_products } from "./data";
 import { ThemeComponentSizeType } from "native-base/lib/typescript/components/types";
 
-export type ProductType = (typeof trending_products)[0];
 export type ButtonVariantType = ResponsiveValue<
 	"outline" | (string & {}) | "link" | "ghost" | "solid" | "subtle" | "unstyled"
 >;
@@ -31,4 +30,27 @@ export interface UserType {
 	createdAt: string;
 	updatedAt: string;
 	__v: number;
+}
+
+export interface ProductType {
+	_id: string;
+	title: string;
+	brand: string;
+	description: string;
+	thumbnail: string;
+	images: string[];
+	price: number;
+	tags: string[];
+	quantity: number;
+	discount: number;
+	seller: string;
+	rating: number;
+	assured: boolean;
+	is_for: string;
+	for_gender: string;
+	for_age: string;
+	sizes: string[];
+	__v: number;
+	createdAt: string;
+	updatedAt: string;
 }

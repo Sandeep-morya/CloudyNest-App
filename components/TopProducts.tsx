@@ -11,13 +11,7 @@ export default function TopProducts() {
 			</Heading>
 			<VStack space={4}>
 				{trending_products.map((e) => (
-					<ProductMediumCard
-						key={e._id}
-						id={e._id}
-						title={e.title}
-						images={e.images}
-						price={e.price}
-					/>
+					<ProductMediumCard key={e._id} {...e} />
 				))}
 			</VStack>
 		</VStack>

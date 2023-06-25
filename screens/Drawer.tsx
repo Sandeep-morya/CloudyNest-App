@@ -27,7 +27,6 @@ import { Screens } from "../data";
 import useNavigation from "../hooks/useNavigation";
 import { IconType } from "../types";
 import { StyleSheet, Animated } from "react-native";
-import useUserProfile from "../hooks/useUserProfile";
 import { useAuth } from "../provider/AuthContextProvider";
 
 interface Props {
@@ -59,8 +58,7 @@ const Button = ({ children, onPress, LeftIcon }: Props) => {
 export default function Drawer() {
 	const navigation = useNavigation();
 	const drawerAnimation = new Animated.Value(0);
-	const { removeAuth, auth } = useAuth();
-	const userData = useUserProfile();
+	const { removeAuth, auth, user } = useAuth();
 
 	const openDrawer = () => {
 		Animated.timing(drawerAnimation, {
@@ -75,7 +73,7 @@ export default function Drawer() {
 			duration: 300,
 			useNativeDriver: true,
 		}).start();
-		setTimeout(() => navigation.goBack(), 10);
+		setTimeout(() => navigation.goBack(), 0);
 	};
 
 	const drawerTranslateX = drawerAnimation.interpolate({
@@ -112,7 +110,7 @@ export default function Drawer() {
 							}}
 						/>
 						<Text fontWeight={"bold"} fontSize={18} color="white">
-							{auth ? userData?.name : "Hello"}
+							{auth ? user?.name : "Hello"}
 						</Text>
 					</HStack>
 

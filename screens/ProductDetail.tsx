@@ -11,20 +11,16 @@
 } from "native-base";
 import React from "react";
 import ProductView from "../components/ProductView";
-import { trending_products } from "../data";
 import ProductAbout from "../components/ProductAbout";
 import SellerCard from "../components/SellerCard";
 import { ResponsiveValue } from "native-base/lib/typescript/components/types";
-import { ButtonVariantType } from "../types";
+import { ButtonVariantType, ProductType } from "../types";
 import {
 	FontAwesome,
 	Ionicons,
 	AntDesign,
 	MaterialIcons,
 } from "@expo/vector-icons";
-const product = trending_products[0];
-
-const { description, images, seller } = product;
 
 interface ButtonProps {
 	title: string;
@@ -46,10 +42,17 @@ const MyButton = ({ title, variant, leftIcon }: ButtonProps) => (
 	</Button>
 );
 
-export default function ProductDeatail() {
+interface Props {
+	route: any;
+	navigation: any;
+}
+
+export default function ProductDeatail({ navigation, route }: Props) {
+	const product = route.params.data as ProductType;
+
 	return (
 		<ScrollView p={"1.5"}>
-			<ProductView images={images} />
+			<ProductView images={product.images} />
 			<VStack p={2} space={2} mb={4}>
 				<ProductAbout {...product} />
 				<HStack w="full" justifyContent={"space-between"} space={3}>
@@ -69,13 +72,13 @@ export default function ProductDeatail() {
 					Description
 				</Heading>
 				<Text color={"gray.500"} letterSpacing={0.5} fontSize={15}>
-					{description}
+					{product.description}
 				</Text>
 				<Divider mt={2} />
 				<Heading size={"md"} mt={2} color={"gray.500"}>
 					Sold By
 				</Heading>
-				<SellerCard sellerID={seller} />
+				<SellerCard sellerID={product.seller} />
 			</VStack>
 		</ScrollView>
 	);

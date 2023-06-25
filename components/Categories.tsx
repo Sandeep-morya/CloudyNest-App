@@ -12,7 +12,7 @@ import React from "react";
 import { Screens, categoryData } from "../data";
 import useNavigation from "../hooks/useNavigation";
 
-const categories = categoryData.slice(0, 6);
+const categories = categoryData;
 
 export default function Categories() {
 	const navigation = useNavigation();

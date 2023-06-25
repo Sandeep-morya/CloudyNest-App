@@ -3,10 +3,11 @@ import { FlatList, Image, Pressable, Text, VStack } from "native-base";
 import useNavigation from "../hooks/useNavigation";
 import { Screens, categoryData } from "../data";
 
-const categories = categoryData.reverse();
+const categories = Array.from(categoryData);
 
 export default function SmallCategories() {
 	const navigation = useNavigation();
+
 	return (
 		<FlatList
 			bg={"gray.100"}

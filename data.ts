@@ -22,7 +22,7 @@ export const categoryData = [
 	{
 		image: require(`./assets/Categories/smartphones.png`),
 		title: "Mobile",
-		category: "smartphone",
+		category: "mobile",
 		color: "teal.100",
 	},
 	{
