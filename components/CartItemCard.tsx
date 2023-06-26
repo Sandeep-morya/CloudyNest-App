@@ -1,5 +1,5 @@
 ﻿import { View, Text } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import {
 	Badge,
 	Flex,
@@ -19,16 +19,24 @@ import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { CartItemType } from "../types";
 import useGetItemById from "../hooks/useGetItemById";
 import useNavigation from "../hooks/useNavigation";
+import useDebounce from "../hooks/useDebounce";
+import { useCart } from "../provider/CartContextProvider";
 
 export default function CartItemCard(item: CartItemType) {
+	const { updateCartItem, deleteCartItem } = useCart();
 	const [quantity, setQuatity] = React.useState(item.count);
-	const navigation = useNavigation();
-
 	const { isLoading, isError, product } = useGetItemById(item.id);
+
+	const navigation = useNavigation();
+	const debouncedValue = useDebounce(quantity);
 
 	const handleQuantityDecrease = React.useCallback(() => {
 		setQuatity((e) => (e === 1 ? e : e - 1));
 	}, []);
+
+	useEffect(() => {
+		updateCartItem(item.id, debouncedValue);
+	}, [debouncedValue]);
 
 	if (isLoading) {
 		return <Skeleton w="full" h="120" />;
@@ -62,7 +70,7 @@ export default function CartItemCard(item: CartItemType) {
 								{product.title}
 							</Heading>
 
-							<TouchableOpacity>
+							<TouchableOpacity onPress={() => deleteCartItem(item.id)}>
 								<Icon mr={2} size={7} as={<FontAwesome name="trash-o" />} />
 							</TouchableOpacity>
 						</Flex>

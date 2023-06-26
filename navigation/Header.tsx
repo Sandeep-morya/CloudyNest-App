@@ -95,7 +95,6 @@ export default function Header(props: StackHeaderProps) {
 						/>
 					</VStack>
 				</Box>
-				;
 			</Flex>
 		</SafeAreaView>
 	);

@@ -19,8 +19,6 @@ const useGetItemById = (id: string) => {
 		}
 	}, [id]);
 
-	console.log({ product });
-
 	useEffect(() => {
 		getProductById();
 	}, []);

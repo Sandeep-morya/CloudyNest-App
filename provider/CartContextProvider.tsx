@@ -13,7 +13,8 @@ import { useAuth } from "./AuthContextProvider";
 interface CartProps {
 	items: CartItemType[];
 	cartPrice: number;
-	updateCartItem: () => void;
+	deleteCartItem: (id: string) => Promise<void>;
+	updateCartItem: (id: string, count: number) => Promise<void>;
 	addToCart: (product: ProductType) => Promise<void>;
 }
 
@@ -48,7 +49,36 @@ const CartContextProvider = ({ children }: PropsWithChildren) => {
 		[auth],
 	);
 
-	const updateCartItem = useCallback(async () => {}, []);
+	const updateCartItem = useCallback(
+		async (id: string, count: number) => {
+			try {
+				const { data } = await API.patch(
+					`/cart/${id}`,
+					{ count },
+					{
+						headers: { Authorization: auth },
+					},
+				);
+				setItems(data);
+			} catch (error) {
+				// console.log(error);
+			}
+		},
+		[auth],
+	);
+
+	const deleteCartItem = useCallback(
+		async (id: string) => {
+			console.log("called");
+			try {
+				const { data } = await API.delete(`/cart/${id}`, {
+					headers: { Authorization: auth },
+				});
+				setItems(data);
+			} catch (error) {}
+		},
+		[auth],
+	);
 
 	const getCartData = useCallback(async () => {
 		if (!auth) {
@@ -69,7 +99,8 @@ const CartContextProvider = ({ children }: PropsWithChildren) => {
 				setCartPrice(0);
 			} else {
 				const total = items.reduce(
-					(previousValue, currentValue) => previousValue + currentValue.price,
+					(previousValue, currentValue) =>
+						previousValue + currentValue.price * currentValue.count,
 					0,
 				);
 				setCartPrice(total);
@@ -90,7 +121,13 @@ const CartContextProvider = ({ children }: PropsWithChildren) => {
 
 	return (
 		<CartContext.Provider
-			value={{ items, cartPrice, addToCart, updateCartItem }}>
+			value={{
+				items,
+				cartPrice,
+				addToCart,
+				updateCartItem,
+				deleteCartItem,
+			}}>
 			{children}
 		</CartContext.Provider>
 	);
