@@ -6,7 +6,7 @@ type StackParamList = {
 	auth: undefined;
 	drawer: undefined;
 	products: { category: string };
-	"product-details": { data: ProductType };
+	"product-details": { id: string | number };
 	cart: undefined;
 	checkout: undefined;
 	payment: undefined;

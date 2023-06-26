@@ -23,7 +23,7 @@ export default function ProductMediumCard(product: ProductType) {
 		<VStack w="full" p={2} space={2}>
 			<Pressable
 				onPress={() =>
-					navigation.navigate(Screens.ProductDeatailScreen, { data: product })
+					navigation.navigate(Screens.ProductDeatailScreen, { id: product._id })
 				}>
 				<Image
 					w={"full"}

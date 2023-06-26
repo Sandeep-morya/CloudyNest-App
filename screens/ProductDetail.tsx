@@ -9,7 +9,7 @@
 	Text,
 	VStack,
 } from "native-base";
-import React from "react";
+import { useCallback, useMemo } from "react";
 import ProductView from "../components/ProductView";
 import ProductAbout from "../components/ProductAbout";
 import SellerCard from "../components/SellerCard";
@@ -21,21 +21,37 @@ import {
 	AntDesign,
 	MaterialIcons,
 } from "@expo/vector-icons";
+import { useCart } from "../provider/CartContextProvider";
+import { useAuth } from "../provider/AuthContextProvider";
+import { Screens } from "../data";
+import { checkItemExistsInCart } from "../utlis/product";
+import { Alert } from "react-native";
+import useGetItemById from "../hooks/useGetItemById";
 
 interface ButtonProps {
 	title: string;
 	variant?: ButtonVariantType;
 	leftIcon?: JSX.Element;
+	onPress?: () => void;
+	disabled?: boolean | undefined;
 }
 
-const MyButton = ({ title, variant, leftIcon }: ButtonProps) => (
+const MyButton = ({
+	title,
+	variant,
+	leftIcon,
+	onPress,
+	disabled,
+}: ButtonProps) => (
 	<Button
+		onPress={onPress}
 		colorScheme={"teal"}
 		variant={variant}
 		outlineColor={"teal"}
 		size="lg"
 		leftIcon={leftIcon}
 		rounded={"full"}
+		disabled={disabled}
 		shadow={variant === "outline" ? "none" : 6}
 		flex={1}>
 		{title}
@@ -48,7 +64,27 @@ interface Props {
 }
 
 export default function ProductDeatail({ navigation, route }: Props) {
-	const product = route.params.data as ProductType;
+	const { id } = route.params;
+	const { auth } = useAuth();
+	const { addToCart, items } = useCart();
+	const { product } = useGetItemById(id);
+
+	const exists = useMemo(
+		() => checkItemExistsInCart(items, product?._id),
+		[items, product?._id],
+	);
+
+	const handleAddToCart = useCallback((product: ProductType) => {
+		if (!auth) {
+			navigation.navigate(Screens.AuthScreen);
+		} else {
+			addToCart(product);
+		}
+	}, []);
+
+	if (!product) {
+		return <></>;
+	}
 
 	return (
 		<ScrollView p={"1.5"}>
@@ -58,13 +94,16 @@ export default function ProductDeatail({ navigation, route }: Props) {
 				<HStack w="full" justifyContent={"space-between"} space={3}>
 					<MyButton
 						variant="outline"
-						title="Add to Cart"
+						title={`${exists ? "Added in " : "Add to "}Cart`}
 						leftIcon={<Icon as={<MaterialIcons name="add-shopping-cart" />} />}
+						onPress={() => handleAddToCart(product)}
+						disabled={exists}
 					/>
 					<MyButton
 						variant={"solid"}
 						title="Buy Now"
 						leftIcon={<Icon as={<FontAwesome name="angle-double-right" />} />}
+						onPress={() => console.log("buy now clicked")}
 					/>
 				</HStack>
 

@@ -4,7 +4,7 @@
 	Flex,
 	HStack,
 	Heading,
-	IconButton,
+	Image,
 	Text,
 	VStack,
 	theme,
@@ -24,54 +24,71 @@ import { FlatList } from "react-native-gesture-handler";
 import CartItemCard from "../components/CartItemCard";
 import useNavigation from "../hooks/useNavigation";
 import Private from "../provider/Private";
+import { useCart } from "../provider/CartContextProvider";
 
-const cart = trending_products;
 const user = sellerProfile;
 
 export default function Cart() {
 	const navigation = useNavigation();
+	const { items, cartPrice } = useCart();
 	return (
 		<Private>
 			<View style={{ flex: 1, backgroundColor: theme.colors.teal[500] }}>
 				<VStack flex={1} p="2">
-					<Heading size={"xl"} fontWeight={"900"}>
+					<Heading size={"xl"} color={"black"} fontWeight={"900"}>
 						My Cart List
 					</Heading>
-					<Text fontSize="18" color={"gray.800"}>
-						Number of items: 3
+					<Text fontSize="18" color={"black"}>
+						Number of items: {items.length}
 					</Text>
-					<FlatList
-						data={cart}
-						keyExtractor={(item) => item._id + "cart"}
-						renderItem={({ item }) => <CartItemCard />}
-						contentContainerStyle={{
-							marginTop: 50,
-							rowGap: 20,
-						}}
-					/>
+					{items.length ? (
+						<FlatList
+							data={items}
+							keyExtractor={(item) => item.id + "cart"}
+							renderItem={({ item }) => <CartItemCard {...item} />}
+							contentContainerStyle={{
+								marginTop: 50,
+								rowGap: 20,
+							}}
+						/>
+					) : (
+						<VStack flex={1} justifyContent={"center"}>
+							<Image
+								w={"100%"}
+								h={300}
+								rounded={"md"}
+								source={{
+									uri: "https://res.cloudinary.com/due9pi68z/image/upload/v1679162004/pm9ia6wpkie9isxnhmsy.webp",
+								}}
+								alt="Nothing here"
+							/>
+						</VStack>
+					)}
 				</VStack>
 
 				{/*---:: Footer ::---*/}
-				<HStack
-					alignItems={"center"}
-					justifyContent={"space-between"}
-					p={2}
-					h={70}
-					bg="white">
-					<VStack>
-						<Heading color="black" size={"sm"}>
-							Total Amount
-						</Heading>
-						<Heading color="black"> ₹ {"2175"}</Heading>
-					</VStack>
-					<Button
-						onPress={() => navigation.navigate(Screens.CheckoutScreen)}
-						size="lg"
-						colorScheme={"teal"}
-						rounded={"full"}>
-						Proceed to checkout
-					</Button>
-				</HStack>
+				{items.length > 0 && (
+					<HStack
+						alignItems={"center"}
+						justifyContent={"space-between"}
+						p={2}
+						h={70}
+						bg="white">
+						<VStack>
+							<Heading color="black" size={"sm"}>
+								Total Amount
+							</Heading>
+							<Heading color="black"> ₹ {cartPrice}</Heading>
+						</VStack>
+						<Button
+							onPress={() => navigation.navigate(Screens.CheckoutScreen)}
+							size="lg"
+							colorScheme={"teal"}
+							rounded={"full"}>
+							Proceed to checkout
+						</Button>
+					</HStack>
+				)}
 			</View>
 		</Private>
 	);

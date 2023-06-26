@@ -54,3 +54,12 @@ export interface ProductType {
 	createdAt: string;
 	updatedAt: string;
 }
+
+
+export interface CartItemType{
+id: string;
+	title: string;
+	count: number;
+	price: number;
+	seller: string;
+}

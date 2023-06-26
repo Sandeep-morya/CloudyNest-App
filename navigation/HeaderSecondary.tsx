@@ -5,12 +5,13 @@ import { Flex, HStack, IconButton, Heading, Avatar } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { sellerProfile } from "../data";
 import { SafeAreaView } from "react-native-safe-area-context";
-const user = sellerProfile;
+import { useAuth } from "../provider/AuthContextProvider";
 
 export default function HeaderSecondary({
 	navigation,
 	route,
 }: StackHeaderProps) {
+	const { user } = useAuth();
 	return (
 		<SafeAreaView>
 			<Flex bg="teal.500" direction="row" justify="space-between" p={2}>
@@ -29,7 +30,9 @@ export default function HeaderSecondary({
 						{route.name}
 					</Heading>
 				</HStack>
-				<Avatar shadow={"7"} source={{ uri: user.image }} />
+				<Avatar bg={"white"} _text={{ color: "black" }} shadow={"7"}>
+					{user?.name.substring(0, 2).toUpperCase()}
+				</Avatar>
 			</Flex>
 		</SafeAreaView>
 	);

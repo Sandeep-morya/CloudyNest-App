@@ -23,7 +23,7 @@ export default function ProductCard(props: ProductType) {
 		<Pressable
 			px={2}
 			onPress={() =>
-				navigation.navigate(Screens.ProductDeatailScreen, { data: props })
+				navigation.navigate(Screens.ProductDeatailScreen, { id: _id })
 			}>
 			<HStack
 				w={"full"}
