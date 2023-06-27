@@ -1,4 +1,4 @@
-﻿import React from "react";
+﻿import { Dispatch, SetStateAction } from "react";
 import { ProductType } from "../types";
 import {
 	FontAwesome,
@@ -16,6 +16,7 @@ import {
 	Badge,
 	Icon,
 } from "native-base";
+import { TouchableOpacity } from "react-native";
 
 interface Props {
 	count: number;
@@ -42,6 +43,11 @@ const Rating = ({ count, size, color }: Props) => {
 	);
 };
 
+interface ProductAboutPros extends ProductType {
+	selectedSize?: number;
+	setSelectedSize?: Dispatch<SetStateAction<number>>;
+}
+
 export default function ProductAbout({
 	title,
 	price,
@@ -49,7 +55,9 @@ export default function ProductAbout({
 	sizes,
 	discount,
 	brand,
-}: ProductType) {
+	selectedSize,
+	setSelectedSize,
+}: ProductAboutPros) {
 	return (
 		<VStack flex={1} space={2} py={2}>
 			<Heading size={"sm"} color={"gray.600"}>
@@ -77,10 +85,16 @@ export default function ProductAbout({
 			<FlatList
 				horizontal
 				data={sizes}
-				renderItem={({ item }) => (
-					<Badge colorScheme={"teal"} variant={"outline"} rounded={"full"}>
-						{item}
-					</Badge>
+				renderItem={({ item, index }) => (
+					<TouchableOpacity
+						onPress={setSelectedSize ? () => setSelectedSize(index) : () => {}}>
+						<Badge
+							colorScheme={"teal"}
+							variant={selectedSize === index ? "solid" : "outline"}
+							rounded={"full"}>
+							{item}
+						</Badge>
+					</TouchableOpacity>
 				)}
 				keyExtractor={(item) => item + "sizes"}
 				contentContainerStyle={{ alignItems: "center", columnGap: 5 }}

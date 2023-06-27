@@ -25,9 +25,10 @@ import { useCart } from "../provider/CartContextProvider";
 import { useAuth } from "../provider/AuthContextProvider";
 import { Screens } from "../data";
 import { checkItemExistsInCart } from "../utlis/product";
-import { Alert } from "react-native";
 import useGetItemById from "../hooks/useGetItemById";
 import LoaderProductDetail from "../components/LoaderProductDetail";
+import { Alert } from "react-native";
+import { useState } from "react";
 
 interface ButtonProps {
 	title: string;
@@ -73,6 +74,8 @@ export default function ProductDeatail({ navigation, route }: Props) {
 	const { addToCart, items, isLoading } = useCart();
 	const { product, isLoading: loading } = useGetItemById(id);
 
+	const [selectedSize, setSelectedSize] = useState(0);
+
 	const exists = useMemo(
 		() => checkItemExistsInCart(items, product?._id),
 		[items, product?._id],
@@ -94,7 +97,7 @@ export default function ProductDeatail({ navigation, route }: Props) {
 		<ScrollView p={"1.5"}>
 			<ProductView images={product.images} />
 			<VStack p={2} space={2} mb={4}>
-				<ProductAbout {...product} />
+				<ProductAbout {...product} {...{ setSelectedSize, selectedSize }} />
 				<HStack w="full" justifyContent={"space-between"} space={3}>
 					<MyButton
 						variant="outline"
