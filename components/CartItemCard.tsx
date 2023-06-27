@@ -66,7 +66,7 @@ export default function CartItemCard(item: CartItemType) {
 							minHeight={50}
 							direction="row"
 							justifyContent={"space-between"}>
-							<Heading size="sm" w={"70%"}>
+							<Heading numberOfLines={2} size="sm" w={"70%"}>
 								{product.title}
 							</Heading>
 

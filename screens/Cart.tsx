@@ -9,6 +9,7 @@
 	VStack,
 	theme,
 	View,
+	Center,
 } from "native-base";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -25,12 +26,13 @@ import CartItemCard from "../components/CartItemCard";
 import useNavigation from "../hooks/useNavigation";
 import Private from "../provider/Private";
 import { useCart } from "../provider/CartContextProvider";
+import { ActivityIndicator } from "react-native";
 
 const user = sellerProfile;
 
 export default function Cart() {
 	const navigation = useNavigation();
-	const { items, cartPrice } = useCart();
+	const { items, cartPrice, isLoading } = useCart();
 	return (
 		<Private>
 			<View style={{ flex: 1, backgroundColor: theme.colors.teal[500] }}>
@@ -74,12 +76,16 @@ export default function Cart() {
 						p={2}
 						h={70}
 						bg="white">
-						<VStack>
-							<Heading color="black" size={"sm"}>
-								Total Amount
-							</Heading>
-							<Heading color="black"> ₹ {cartPrice}</Heading>
-						</VStack>
+						{isLoading ? (
+							<ActivityIndicator style={{ marginLeft: 30 }} size="large" />
+						) : (
+							<VStack>
+								<Heading color="black" size={"sm"}>
+									Total Amount
+								</Heading>
+								<Heading color="black"> ₹ {cartPrice}</Heading>
+							</VStack>
+						)}
 						<Button
 							onPress={() => navigation.navigate(Screens.CheckoutScreen)}
 							size="lg"

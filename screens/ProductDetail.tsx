@@ -27,11 +27,13 @@ import { Screens } from "../data";
 import { checkItemExistsInCart } from "../utlis/product";
 import { Alert } from "react-native";
 import useGetItemById from "../hooks/useGetItemById";
+import LoaderProductDetail from "../components/LoaderProductDetail";
 
 interface ButtonProps {
 	title: string;
 	variant?: ButtonVariantType;
 	leftIcon?: JSX.Element;
+	isLoading?: boolean | undefined;
 	onPress?: () => void;
 	disabled?: boolean | undefined;
 }
@@ -42,6 +44,7 @@ const MyButton = ({
 	leftIcon,
 	onPress,
 	disabled,
+	isLoading,
 }: ButtonProps) => (
 	<Button
 		onPress={onPress}
@@ -49,6 +52,7 @@ const MyButton = ({
 		variant={variant}
 		outlineColor={"teal"}
 		size="lg"
+		isLoading={isLoading}
 		leftIcon={leftIcon}
 		rounded={"full"}
 		disabled={disabled}
@@ -66,8 +70,8 @@ interface Props {
 export default function ProductDeatail({ navigation, route }: Props) {
 	const { id } = route.params;
 	const { auth } = useAuth();
-	const { addToCart, items } = useCart();
-	const { product } = useGetItemById(id);
+	const { addToCart, items, isLoading } = useCart();
+	const { product, isLoading: loading } = useGetItemById(id);
 
 	const exists = useMemo(
 		() => checkItemExistsInCart(items, product?._id),
@@ -82,11 +86,11 @@ export default function ProductDeatail({ navigation, route }: Props) {
 		}
 	}, []);
 
-	if (!product) {
-		return <></>;
+	if (loading) {
+		return <LoaderProductDetail />;
 	}
 
-	return (
+	return product ? (
 		<ScrollView p={"1.5"}>
 			<ProductView images={product.images} />
 			<VStack p={2} space={2} mb={4}>
@@ -98,6 +102,7 @@ export default function ProductDeatail({ navigation, route }: Props) {
 						leftIcon={<Icon as={<MaterialIcons name="add-shopping-cart" />} />}
 						onPress={() => handleAddToCart(product)}
 						disabled={exists}
+						isLoading={isLoading}
 					/>
 					<MyButton
 						variant={"solid"}
@@ -120,5 +125,7 @@ export default function ProductDeatail({ navigation, route }: Props) {
 				<SellerCard sellerID={product.seller} />
 			</VStack>
 		</ScrollView>
+	) : (
+		<></>
 	);
 }

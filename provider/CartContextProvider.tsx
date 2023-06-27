@@ -13,6 +13,7 @@ import { useAuth } from "./AuthContextProvider";
 interface CartProps {
 	items: CartItemType[];
 	cartPrice: number;
+	isLoading: boolean;
 	deleteCartItem: (id: string) => Promise<void>;
 	updateCartItem: (id: string, count: number) => Promise<void>;
 	addToCart: (product: ProductType) => Promise<void>;
@@ -23,12 +24,14 @@ const CartContext = createContext({} as CartProps);
 export const useCart = () => useContext(CartContext);
 
 const CartContextProvider = ({ children }: PropsWithChildren) => {
+	const [isLoading, setIsLoading] = useState(false);
 	const [items, setItems] = useState<CartItemType[]>([]);
 	const [cartPrice, setCartPrice] = useState(0);
 	const { auth } = useAuth();
 
 	const addToCart = useCallback(
 		async (product: ProductType) => {
+			setIsLoading(true);
 			try {
 				const { data } = await API.patch(
 					"/cart",
@@ -44,13 +47,17 @@ const CartContextProvider = ({ children }: PropsWithChildren) => {
 					{ headers: { Authorization: auth } },
 				);
 				setItems(data);
-			} catch (error) {}
+				setIsLoading(false);
+			} catch (error) {
+				setIsLoading(false);
+			}
 		},
 		[auth],
 	);
 
 	const updateCartItem = useCallback(
 		async (id: string, count: number) => {
+			setIsLoading(true);
 			try {
 				const { data } = await API.patch(
 					`/cart/${id}`,
@@ -60,8 +67,9 @@ const CartContextProvider = ({ children }: PropsWithChildren) => {
 					},
 				);
 				setItems(data);
+				setIsLoading(false);
 			} catch (error) {
-				// console.log(error);
+				setIsLoading(false);
 			}
 		},
 		[auth],
@@ -69,13 +77,17 @@ const CartContextProvider = ({ children }: PropsWithChildren) => {
 
 	const deleteCartItem = useCallback(
 		async (id: string) => {
-			console.log("called");
+			setIsLoading(true);
+
 			try {
 				const { data } = await API.delete(`/cart/${id}`, {
 					headers: { Authorization: auth },
 				});
 				setItems(data);
-			} catch (error) {}
+				setIsLoading(false);
+			} catch (error) {
+				setIsLoading(false);
+			}
 		},
 		[auth],
 	);
@@ -85,12 +97,17 @@ const CartContextProvider = ({ children }: PropsWithChildren) => {
 			setItems([]);
 			return;
 		}
+		setIsLoading(true);
+
 		try {
 			const { data } = await API.get("/cart", {
 				headers: { Authorization: auth },
 			});
 			setItems(data);
-		} catch (error) {}
+			setIsLoading(false);
+		} catch (error) {
+			setIsLoading(false);
+		}
 	}, [auth]);
 
 	const calculateCartPrice = useCallback(
@@ -124,6 +141,7 @@ const CartContextProvider = ({ children }: PropsWithChildren) => {
 			value={{
 				items,
 				cartPrice,
+				isLoading,
 				addToCart,
 				updateCartItem,
 				deleteCartItem,
