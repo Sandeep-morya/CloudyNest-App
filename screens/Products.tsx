@@ -4,6 +4,7 @@
 	HStack,
 	Heading,
 	ScrollView,
+	Skeleton,
 	Text,
 	VStack,
 } from "native-base";
@@ -16,6 +17,7 @@ import { ProductType } from "../types";
 import { ActivityIndicator } from "react-native";
 import theme from "../theme";
 import Pagination from "../components/Pagination";
+import LoaderProductView from "../components/LoaderProductView";
 
 interface Props {
 	route: any;
@@ -55,7 +57,13 @@ export default function Products({ route, navigation }: Props) {
 	}, [page, getProducts]);
 
 	if (isLoading) {
-		return <ActivityIndicator size={"large"} color={theme.colors.teal[500]} />;
+		return (
+			<VStack space={1} mb={12} flex={1} p={2}>
+				<Skeleton h={"250"} rounded="md" />
+				<Skeleton h={"250"} rounded="md" />
+				<Skeleton h={"250"} rounded="md" />
+			</VStack>
+		);
 	}
 
 	return (
