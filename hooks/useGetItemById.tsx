@@ -21,7 +21,7 @@ const useGetItemById = (id: string) => {
 
 	useEffect(() => {
 		getProductById();
-	}, []);
+	}, [getProductById]);
 	return { isLoading, isError, product };
 };
 

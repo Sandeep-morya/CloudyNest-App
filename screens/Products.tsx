@@ -52,7 +52,12 @@ export default function Products({ route, navigation }: Props) {
 
 	useEffect(() => {
 		getProducts(page);
-	}, [page]);
+	}, [page, getProducts]);
+
+	if (isLoading) {
+		return <ActivityIndicator size={"large"} color={theme.colors.teal[500]} />;
+	}
+
 	return (
 		<VStack space={1} mb={12} flex={1}>
 			<HStack p={3} bg="teal.100">
@@ -61,9 +66,6 @@ export default function Products({ route, navigation }: Props) {
 				</Text>
 			</HStack>
 
-			{isLoading && (
-				<ActivityIndicator size={"large"} color={theme.colors.teal[500]} />
-			)}
 			{!isLoading && products.length === 0 && (
 				<Center>
 					<Heading>No items found</Heading>

@@ -55,9 +55,8 @@ export interface ProductType {
 	updatedAt: string;
 }
 
-
-export interface CartItemType{
-id: string;
+export interface CartItemType {
+	id: string;
 	title: string;
 	count: number;
 	price: number;
