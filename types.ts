@@ -62,3 +62,19 @@ export interface CartItemType {
 	price: number;
 	seller: string;
 }
+export interface AddressType {
+	house: string;
+	area: string;
+	landmark: string;
+	city: string;
+	state: string;
+	pincode: string;
+}
+
+export type PaymentMethodType =
+	| "Cash on Delivery"
+	| "Google Pay"
+	| "Phone Pay"
+	| "Paytm"
+	| "Debit Card"
+	| "Credit Card";

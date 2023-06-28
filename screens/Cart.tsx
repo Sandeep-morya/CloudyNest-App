@@ -87,7 +87,9 @@ export default function Cart() {
 							</VStack>
 						)}
 						<Button
-							onPress={() => navigation.navigate(Screens.CheckoutScreen)}
+							onPress={() =>
+								navigation.navigate(Screens.CheckoutScreen, { items })
+							}
 							size="lg"
 							colorScheme={"teal"}
 							rounded={"full"}>

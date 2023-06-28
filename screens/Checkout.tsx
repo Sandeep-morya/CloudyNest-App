@@ -13,9 +13,35 @@ import theme from "../theme";
 import { Screens } from "../data";
 import useNavigation from "../hooks/useNavigation";
 import CheckoutForm from "../components/CheckoutForm";
+import { useState, useCallback } from "react";
+import { AddressType, CartItemType } from "../types";
+import { Alert } from "react-native";
+const initialState: AddressType = {
+	house: "",
+	area: "",
+	landmark: "",
+	city: "",
+	state: "",
+	pincode: "",
+};
 
-export default function Checkout() {
+export default function Checkout(props: any) {
 	const navigation = useNavigation();
+	const items = props.route.params.items as CartItemType[];
+
+	const [deliveryAddress, setDeliveryAddress] = useState(initialState);
+
+	const handleMoveToPayment = useCallback((address: AddressType) => {
+		const allFilled = Object.values(address).every((e) => e != "");
+		if (allFilled) {
+			navigation.navigate(Screens.PaymentScreen, { items, address });
+		} else {
+			Alert.alert(
+				"Delivery Address",
+				"Fill All the fields of address form correctly",
+			);
+		}
+	}, []);
 	return (
 		<View style={{ flex: 1, backgroundColor: theme.colors.teal[500] }}>
 			<VStack flex={1} p="2">
@@ -26,7 +52,7 @@ export default function Checkout() {
 					Delivery Address
 				</Heading>
 				<ScrollView mt={3} rounded={"xl"}>
-					<CheckoutForm />
+					<CheckoutForm {...{ deliveryAddress, setDeliveryAddress }} />
 				</ScrollView>
 			</VStack>
 
@@ -44,7 +70,7 @@ export default function Checkout() {
 					<Heading color="black"> ₹ {"2175"}</Heading>
 				</VStack>
 				<Button
-					onPress={() => navigation.navigate(Screens.PaymentScreen)}
+					onPress={() => handleMoveToPayment(deliveryAddress)}
 					size="lg"
 					colorScheme={"teal"}
 					rounded={"full"}>

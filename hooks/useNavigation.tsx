@@ -1,6 +1,6 @@
 ﻿import { useNavigation as navigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { ProductType } from "../types";
+import { AddressType, CartItemType, ProductType } from "../types";
 type StackParamList = {
 	home: undefined;
 	auth: undefined;
@@ -8,8 +8,8 @@ type StackParamList = {
 	products: { category: string };
 	"product-details": { id: string | number };
 	cart: undefined;
-	checkout: undefined;
-	payment: undefined;
+	checkout: { items: CartItemType[] };
+	payment: { items: CartItemType[]; address: AddressType };
 };
 export default function useNavigation() {
 	return navigation<StackNavigationProp<StackParamList>>();
